@@ -1,0 +1,126 @@
+/* Navbar Container */
+.navbar {
+    background: #007bff;
+    /* Primary navbar background */
+    padding: 15px 20px;
+    /* Add some padding for spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Softer shadow */
+    position: relative;
+    /* Fix it to the top */
+    width: 100%;
+    /* Full-width navbar */
+    top: 0;
+    /* Stick it to the top */
+    z-index: 1000;
+    /* Ensure it stays on top of other elements */
+}
+
+/* Navbar List */
+.navbar-list {
+    display: flex;
+    justify-content: center;
+    /* Center navbar items */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Item */
+.navbar-item {
+    margin: 0 20px;
+    /* Space between items */
+    position: relative;
+}
+
+/* Navbar Links */
+.navbar-item a {
+    color: white;
+    /* White text */
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    /* Spacing for links */
+    font-size: 16px;
+    transition: color 0.3s, transform 0.3s ease;
+    /* Smooth transitions */
+}
+
+/* Hover Effect for Navbar Links */
+.navbar-item a:hover {
+    color: #00bfff;
+    /* Change color on hover */
+    transform: translateY(-3px);
+    /* Lift effect */
+}
+
+/* Underline Effect on Hover */
+.navbar-item a:after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #00bfff;
+    /* Color of underline */
+    transition: width 0.3s ease, background-color 0.3s ease;
+    width: 0;
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    transform: translateX(-50%);
+}
+
+/* Animate Underline to Full Width */
+.navbar-item a:hover:after {
+    width: 100%;
+    /* Full width underline */
+    left: 0;
+    /* Center the underline */
+}
+
+/* Logout Button Styling */
+.logout-button {
+    background-color: #e74c3c;
+    /* Red background for logout */
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+    /* Darker red on hover */
+}
+
+/* Responsive Adjustments for Smaller Screens */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px;
+        /* Adjust padding for mobile */
+    }
+
+    .navbar-list {
+        flex-direction: column;
+        /* Stack items vertically */
+        align-items: center;
+        /* Center items on smaller screens */
+    }
+
+    .navbar-item {
+        margin: 10px 0;
+        /* Adjust spacing between items */
+    }
+
+    .navbar-item a {
+        font-size: 18px;
+        /* Slightly larger text for readability */
+    }
+
+    .logout-button {
+        margin-top: 15px;
+        /* Add margin to the logout button */
+    }
+}

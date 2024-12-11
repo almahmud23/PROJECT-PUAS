@@ -1,0 +1,16 @@
+.details-program {
+    padding: 20px;
+}
+
+.request-info-button, .waiver-calculate-button {
+    margin: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.request-info-button:hover, .waiver-calculate-button:hover {
+    background-color: #45a049;
+}

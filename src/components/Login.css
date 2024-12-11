@@ -1,0 +1,113 @@
+
+.body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Login container styling */
+.login-container {
+    background-color: white;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.login-container:hover {
+    transform: scale(1.03);
+    /* Slight zoom on hover */
+}
+
+/* Heading styling */
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Input field styling */
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #007bff;
+    /* Border color on focus */
+    outline: none;
+}
+
+/* Forgot password styling */
+p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #007bff;
+}
+
+p a {
+    text-decoration: none;
+    color: #ff3c00;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Button styling */
+button {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #0056b3;
+    /* Darker shade on hover */
+}
+
+/* Responsive design */
+@media screen and (max-width: 480px) {
+    .login-container {
+        padding: 20px 15px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    button {
+        padding: 10px 15px;
+    }
+}

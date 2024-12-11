@@ -1,0 +1,120 @@
+/* AdminDashboard.css */
+
+.abody {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Column layout for footer at the bottom */
+}
+
+.admin-dashboard {
+    padding: 20px;
+    flex: 1;
+}
+
+/* Header Styling */
+.dashboard-header {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+/* Dashboard Statistics */
+.dashboard-stats {
+    display: flex;
+    justify-content: space-around;
+    /* Space out the cards */
+    margin-bottom: 20px;
+}
+.stat-card p{
+    color: rgb(252, 248, 248);
+    font-size: medium;
+    text-align: center;
+    padding: 10px;
+}
+
+.stat-card {
+    background-color: #007bff;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    /* Lift effect on hover */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    /* Light border for table cells */
+    padding: 12px;
+    /* Padding for table cells */
+    text-align: left;
+    /* Align text to the left */
+}
+
+.table th {
+    background-color: #007bff;
+    /* Header background */
+    color: white;
+    /* Header text color */
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    /* Zebra striping for even rows */
+}
+
+.table tr:hover {
+    background-color: #e0e0e0;
+    /* Highlight row on hover */
+    transition: background-color 0.3s;
+    /* Animation for row highlight */
+}
+
+/* Footer Styling */
+.home-footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #007bff;
+    color: white;
+    position: relative;
+}
+.home-footer p{
+    color: #000;
+    font-size: small;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-stats {
+        flex-direction: column;
+    }
+
+    .stat-card {
+        margin-bottom: 20px;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
