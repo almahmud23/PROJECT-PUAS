@@ -1,0 +1,98 @@
+/* Programs.css */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.programs-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.filters-sorters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filters input,
+.sorters button {
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filters input {
+    flex: 1;
+}
+
+.sorters button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.sorters button:hover {
+    background-color: #0056b3;
+}
+
+.program-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.program-card {
+    flex: 1 1 calc(33.333% - 20px);
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.program-card:hover {
+    transform: scale(1.02);
+}
+
+.program-card h3 {
+    margin: 0 0 10px;
+    cursor: pointer;
+}
+
+.program-card p {
+    margin: 5px 0;
+}
+
+.save-button {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.save-button.saved {
+    background-color: #28a745;
+    color: white;
+}
+
+.apply-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.apply-button:disabled {
+    background-color: #6c757d;
+}

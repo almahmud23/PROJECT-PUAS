@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProgramManagement from './ProgramManagement';
 import Navbar from './Navbar';
+import UniversityManagement from './UniversityManagement';
 
 const StaffDashboard = () => {
   const [userRole, setUserRole] = useState(null);
@@ -134,6 +135,7 @@ const StaffDashboard = () => {
         <h3>Manage Programs</h3>
         <p>View, add, or edit programs for your university.</p>
         <ProgramManagement role={userRole} />
+        <UniversityManagement role={userRole} />
       </section>
     </div>
   );

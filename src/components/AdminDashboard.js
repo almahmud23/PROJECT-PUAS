@@ -5,6 +5,8 @@ import UserManagement from "./UserManagement";
 import ProgramManagement from "./ProgramManagement";
 
 import './AdminDashboard.css';
+import UniversityManagement from "./UniversityManagement";
+import UniversityForm from "./UniversityForm";
 
 function AdminDashboard() {
     const [totalUsers, setTotalUsers] = useState(0);
@@ -95,6 +97,8 @@ function AdminDashboard() {
                     <br />
                     <UserManagement />
                     <br />
+                    <UniversityManagement role={userRole} />
+                    
                     <LogHistory logHistory={logHistory} />
                 </div>
 

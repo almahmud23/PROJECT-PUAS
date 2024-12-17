@@ -1,66 +1,85 @@
 /* Navbar Container */
 .navbar {
     background: #007bff;
-    /* Primary navbar background */
-    padding: 15px 20px;
-    /* Add some padding for spacing */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Softer shadow */
-    position: relative;
-    /* Fix it to the top */
-    width: 100%;
-    /* Full-width navbar */
-    top: 0;
-    /* Stick it to the top */
-    z-index: 1000;
-    /* Ensure it stays on top of other elements */
+    padding: 20px 20px; /* Add some padding for spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    position: relative; /* Fix it to the top */
+    width: 100%; /* Full-width navbar */
+    top: 0; /* Stick it to the top */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo a {
+    color: white;
+    font-size: 24px;
+    font-weight: bolder;
+    text-decoration: none;
+}
+.navbar-logo span {
+    color: #c0392b;
+    font-size: 36px;
+}
+
+/* Menu Button for Mobile */
+.menu-button {
+    display: none; /* Hidden by default */
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
 }
 
 /* Navbar List */
 .navbar-list {
     display: flex;
-    justify-content: center;
-    /* Center navbar items */
+    justify-content: center; /* Center navbar items */
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
+.navbar-list.open {
+    display: block; /* Show menu in mobile view */
+}
+
 /* Navbar Item */
 .navbar-item {
-    margin: 0 20px;
-    /* Space between items */
+    margin: 0 20px; /* Space between items */
     position: relative;
 }
 
 /* Navbar Links */
-.navbar-item a {
-    color: white;
-    /* White text */
+.navbar-item a, .navbar-item button {
+    color: white; /* White text */
     text-decoration: none;
     font-weight: bold;
-    padding: 10px 15px;
-    /* Spacing for links */
+    padding: 10px 15px; /* Spacing for links */
     font-size: 16px;
-    transition: color 0.3s, transform 0.3s ease;
-    /* Smooth transitions */
+    transition: color 0.3s, transform 0.3s ease; /* Smooth transitions */
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 /* Hover Effect for Navbar Links */
-.navbar-item a:hover {
-    color: #00bfff;
-    /* Change color on hover */
-    transform: translateY(-3px);
-    /* Lift effect */
+.navbar-item a:hover, .navbar-item button:hover {
+    color: #00bfff; /* Change color on hover */
+    transform: translateY(-3px); /* Lift effect */
 }
 
 /* Underline Effect on Hover */
-.navbar-item a:after {
+.navbar-item a:after, .navbar-item button:after {
     content: '';
     display: block;
     height: 2px;
-    background: #00bfff;
-    /* Color of underline */
+    background: #00bfff; /* Color of underline */
     transition: width 0.3s ease, background-color 0.3s ease;
     width: 0;
     position: absolute;
@@ -70,17 +89,14 @@
 }
 
 /* Animate Underline to Full Width */
-.navbar-item a:hover:after {
-    width: 100%;
-    /* Full width underline */
-    left: 0;
-    /* Center the underline */
+.navbar-item a:hover:after, .navbar-item button:hover:after {
+    width: 100%; /* Full width underline */
+    left: 0; /* Center the underline */
 }
 
 /* Logout Button Styling */
 .logout-button {
-    background-color: #e74c3c;
-    /* Red background for logout */
+    background-color: #e74c3c; /* Red background for logout */
     color: white;
     font-weight: bold;
     border: none;
@@ -91,36 +107,74 @@
 }
 
 .logout-button:hover {
-    background-color: #c0392b;
-    /* Darker red on hover */
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Submenu for Dropdown Items */
+.submenu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #007bff; /* Match primary navbar background */
+    top: 100%; /* Position below the parent item */
+    left: 0;
+    width: max-content;
+    padding: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar-item:hover .submenu {
+    display: block; /* Show submenu on hover */
+}
+
+.submenu .navbar-subitem {
+    margin: 0;
+}
+
+.submenu .navbar-subitem a {
+    padding: 10px 15px;
+    white-space: nowrap;
+}
+
+.submenu .navbar-subitem a:hover {
+    background-color: #00bfff;
+    color: white;
 }
 
 /* Responsive Adjustments for Smaller Screens */
 @media (max-width: 768px) {
-    .navbar {
-        padding: 10px;
-        /* Adjust padding for mobile */
+    .menu-button {
+        display: block; /* Show the menu button */
     }
 
     .navbar-list {
-        flex-direction: column;
-        /* Stack items vertically */
-        align-items: center;
-        /* Center items on smaller screens */
+        display: none; /* Hide the list by default */
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items on smaller screens */
+    }
+
+    .navbar-list.open {
+        display: flex; /* Show the list when menu is open */
     }
 
     .navbar-item {
-        margin: 10px 0;
-        /* Adjust spacing between items */
+        margin: 10px 0; /* Adjust spacing between items */
     }
 
     .navbar-item a {
-        font-size: 18px;
-        /* Slightly larger text for readability */
+        font-size: 18px; /* Slightly larger text for readability */
     }
 
     .logout-button {
-        margin-top: 15px;
-        /* Add margin to the logout button */
+        margin-top: 15px; /* Add margin to the logout button */
+    }
+
+    .submenu {
+        position: static; /* Adjust positioning for mobile */
+        box-shadow: none; /* Remove shadow for mobile */
+    }
+
+    .submenu .navbar-subitem a {
+        padding-left: 30px; /* Indent submenu items */
     }
 }

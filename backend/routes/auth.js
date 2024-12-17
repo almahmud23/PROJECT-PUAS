@@ -2,6 +2,9 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const db = require('../db');
 const router = express.Router();
 
@@ -271,6 +274,7 @@ router.get('/users', (req, res) => {
     });
 });
 
+
 // Endpoint to fetch all users role
 router.get('/user-role', (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -334,6 +338,8 @@ router.get('/university/:id', (req, res) => {
 // Get universities for staff or all universities for admins
 router.get('/universities', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Extract token
+    console.log('Token received:', token);
+
 
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
@@ -370,7 +376,7 @@ router.get('/universities', (req, res) => {
 });
 
 
-// Endpoint to fetch all program data
+// Endpoint to fetch all program data including university names
 router.get('/programs', (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Extract token
 
@@ -393,8 +399,13 @@ router.get('/programs', (req, res) => {
         console.log('Decoded Token Data:', decoded);
 
         const query = role === 'Staff'
-            ? 'SELECT * FROM programs WHERE universityID = ?'
-            : 'SELECT * FROM programs';
+            ? `SELECT p.*, u.universityName
+               FROM programs p
+               JOIN university u ON p.universityID = u.universityID
+               WHERE p.universityID = ?`
+            : `SELECT p.*, u.universityName
+               FROM programs p
+               JOIN university u ON p.universityID = u.universityID`;
 
         const params = role === 'Staff' ? [universityID] : [];
 
@@ -407,6 +418,8 @@ router.get('/programs', (req, res) => {
         });
     });
 });
+
+
 
 // Endpoint to fetch applications for staff or all universities applications for admins
 router.get('/applications', (req, res) => {
@@ -452,36 +465,181 @@ router.get('/applications', (req, res) => {
 router.get('/program/:programID', (req, res) => {
     const { programID } = req.params;
 
-    db.query(
-        'SELECT * FROM programs WHERE programID = ?',
-        [programID],
-        (error, programResults) => {
-            if (error) {
-                return res.status(500).json({ message: 'Error retrieving program details' });
-            }
+    const query = `
+        SELECT p.*, u.universityName
+        FROM programs p
+        JOIN university u ON p.universityID = u.universityID
+        WHERE p.programID = ?
+    `;
 
-            if (programResults.length === 0) {
-                return res.status(404).json({ message: 'Program not found' });
-            }
-
-            // Fetch history for the university
-            const universityID = programResults[0].universityID;
-            db.query(
-                'SELECT * FROM programs WHERE universityID = ?',
-                [universityID],
-                (historyError, historyResults) => {
-                    if (historyError) {
-                        return res.status(500).json({ message: 'Error retrieving program history' });
-                    }
-                    res.status(200).json({
-                        program: programResults[0],
-                        history: historyResults.map((program) => program.programName) // Assuming you want to show all programs of the same university
-                    });
-                }
-            );
+    db.query(query, [programID], (error, programResults) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error retrieving program details' });
         }
-    );
+
+        if (programResults.length === 0) {
+            return res.status(404).json({ message: 'Program not found' });
+        }
+
+        // Fetch history for the university
+        const universityID = programResults[0].universityID;
+        db.query(
+            'SELECT programID, programName FROM programs WHERE universityID = ?',
+            [universityID],
+            (historyError, historyResults) => {
+                if (historyError) {
+                    return res.status(500).json({ message: 'Error retrieving program history' });
+                }
+                res.status(200).json({
+                    program: programResults[0],
+                    history: historyResults.map((program) => ({
+                        id: program.programID,
+                        name: program.programName
+                    })) // Return an object with id and name
+                });
+            }
+        );
+        
+    });
 });
+
+
+// Endpoint to add a new university
+router.post('/university', (req, res) => {
+    const { universityName, location, contact, about, website } = req.body;
+
+    if (!universityName || !location || !contact) {
+        return res.status(400).json({ message: 'Required fields are missing' });
+    }
+
+    const query = 'INSERT INTO university (universityName, location, contact, about, website) VALUES (?, ?, ?, ?, ?)';
+    const values = [universityName, location, contact, about || '', website || ''];
+
+    db.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error adding university:', error);
+            return res.status(500).json({ message: 'Error adding university' });
+        }
+        res.status(201).json({ message: 'University added successfully', universityID: results.insertId });
+    });
+});
+
+// Endpoint to update a university
+router.put('/university/:id', (req, res) => {
+    const universityID = req.params.id;
+    console.log(universityID);
+    const { universityName, location, contact, about, website } = req.body;
+
+    const query = `UPDATE university SET universityName = ?, location = ?, contact = ?, about = ?, website = ? WHERE universityID = ?`;
+    const values = [universityName, location, contact, about || '', website || '', universityID];
+
+    db.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error updating university:', error);
+            return res.status(500).json({ message: 'Error updating university' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'University not found' });
+        }
+
+        res.status(200).json({ message: 'University updated successfully' });
+    });
+});
+
+// Endpoint to delete a university
+router.delete('/university/:id', (req, res) => {
+    const universityID = req.params.id;
+
+    const query = 'DELETE FROM university WHERE universityID = ?';
+
+    db.query(query, [universityID], (error, results) => {
+        if (error) {
+            console.error('Error deleting university:', error);
+            return res.status(500).json({ message: 'Error deleting university' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'University not found' });
+        }
+
+        res.status(200).json({ message: 'University deleted successfully' });
+    });
+});
+
+
+// Function to get distances using Google Maps Distance Matrix API
+const getDistances = async (userLocation, universities) => {
+    const apiKey = 'AIzaSyCD3NL_didGH88eXLhSvTdsHn4I0ABU28Q';
+    const origins = `${userLocation.latitude},${userLocation.longitude}`;
+    const destinations = universities
+        .map((uni) => `${uni.latitude},${uni.longitude}`)
+        .join('|');
+
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origins}&destinations=${destinations}&key=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === 'OK') {
+            console.log('Google Maps API Data:', data);
+
+            return universities.map((university, index) => {
+                const element = data.rows[0].elements[index];
+
+                return {
+                    ...university,
+                    distance: element?.distance?.value / 1000 || null, // Distance in km
+                    duration: element?.duration?.text || 'Unknown',
+                };
+            });
+        } else {
+            console.error('Google Maps API Error:', data.error_message);
+            return universities.map((uni) => ({ ...uni, distance: null, duration: null }));
+        }
+    } catch (error) {
+        console.error('Error fetching distances:', error);
+        return universities.map((uni) => ({ ...uni, distance: null, duration: null }));
+    }
+};
+
+//get university
+router.get('/universitieses', async (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Extract Bearer token if present
+    console.log("Token received:", token);
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
+            console.log("Decoded user:", decoded);
+        } catch (err) {
+            return res.status(401).json({ message: 'Invalid or expired token.' });
+        }
+    }
+
+    const { latitude, longitude } = req.query;
+
+    if (!latitude || !longitude) {
+        return res.status(400).json({ message: 'User location (latitude and longitude) is required.' });
+    }
+
+    const query = 'SELECT * FROM university'; // Ensure your database includes latitude & longitude
+    db.query(query, async (error, results) => {
+        if (error) {
+            console.error('Database Error:', error);
+            return res.status(500).json({ message: 'Database query error.' });
+        }
+
+        const userLocation = { latitude: parseFloat(latitude), longitude: parseFloat(longitude) };
+        const universitiesWithDistances = await getDistances(userLocation, results);
+
+        // Sort by proximity
+        universitiesWithDistances.sort((a, b) => a.distance - b.distance);
+        res.status(200).json(universitiesWithDistances);
+    });
+});
+
 
 // Endpoint to delete all program data
 router.delete('/programs/:programID', (req, res) => {
@@ -733,6 +891,7 @@ router.post('/favorites', (req, res) => {
     });
 });
 
+//applications check
 router.patch('/applications/:id', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -767,7 +926,7 @@ router.patch('/applications/:id', async (req, res) => {
                 }
 
                 const { studentEmail, studentName, programName } = result[0];
-                
+
                 db.query(
                     'UPDATE applications SET status = ? WHERE applicationID = ?',
                     [status, id]
@@ -787,18 +946,233 @@ router.patch('/applications/:id', async (req, res) => {
 
 
 
+// Endpoint to save waiver calculation
+router.post('/waiver', (req, res) => {
+    const { userID, programID, universityID, sscGPA, hscGPA, expertise } = req.body;
+
+    console.log("wc", req.body);
+
+    if (!userID || !programID || !universityID || !sscGPA || !hscGPA || !expertise) {
+        return res.status(400).json({ message: 'Required fields are missing' });
+    }
+
+    // Calculate percentage and final fee based on baseFee and inputs
+    const baseFeeQuery = 'SELECT tuitionFee FROM programs WHERE programID = ?';
+    db.query(baseFeeQuery, [programID], (err, results) => {
+        if (err || results.length === 0) {
+            console.error('Error fetching base fee:', err);
+            return res.status(500).json({ message: 'Error fetching base fee' });
+        }
+
+        const baseFee = results[0].tuitionFee;
+        let percentage = 0;
+
+        // Example waiver logic
+        if (sscGPA >= 4.5 && hscGPA >= 4.5) percentage += 20;
+        if (expertise === 'National Player') percentage += 30;
+        else if (expertise === 'Special Ability') percentage += 20;
+        else if (expertise === 'Social Influencer') percentage += 15;
+        else if (expertise === 'Tribal Species') percentage += 25;
+
+        const finalFee = baseFee * ((100 - percentage) / 100);
+
+        // Insert into waivercalculations table
+        const insertQuery = `
+            INSERT INTO waivercalculations 
+            (userID, programID, universityID, sscGPA, hscGPA, expertise, baseFee, percentage, finalFee, calculatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `;
+        const values = [userID, programID, universityID, sscGPA, hscGPA, expertise, baseFee, percentage, finalFee];
+
+        db.query(insertQuery, values, (error, results) => {
+            if (error) {
+                console.error('Error saving waiver calculation:', error);
+                return res.status(500).json({ message: 'Error saving waiver calculation' });
+            }
+            res.status(201).json({
+                message: 'Waiver calculation saved successfully',
+                calculationID: results.insertId,
+                percentage,
+                finalFee,
+            });
+        });
+    });
+});
+
+// Endpoint to retrieve waiver calculations for a program
+router.get('/waiver/:programID', (req, res) => {
+    const { programID } = req.params;
+
+    const query = `
+        SELECT wc.*, u.name AS userName
+        FROM waivercalculations wc
+        JOIN users u ON wc.userID = u.userID
+        WHERE wc.programID = ?
+    `;
+    db.query(query, [programID], (err, results) => {
+        if (err) {
+            console.error('Error fetching waiver calculations:', err);
+            return res.status(500).json({ message: 'Error fetching waiver calculations' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// Endpoint to send request
+router.post('/request', (req, res) => {
+    const { userID, programID, rType, message } = req.body;
+
+
+    if (!userID || !programID || !rType || !message) {
+        console.log("req-body: ", req.body);
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const status = 'pending';
+    db.query(
+        'INSERT INTO userRequests (programID, userID, rType, message, status, requestDate) VALUES (?, ?, ?, ?, ?, NOW())',
+        [programID, userID, rType, message, status],
+        (error, results) => {
+            if (error) {
+                console.error('Error submitting request:', error);
+                return res.status(500).json({ message: 'Error submitting request' });
+            }
+            res.status(200).json({ message: 'Request submitted successfully' });
+        }
+    );
+});
+
+
+
+// Endpoint to fetch a specific user data by ID
+router.get('/users/:id', (req, res) => {
+    const { id } = req.params;
+
+    db.query('SELECT * FROM users WHERE userID = ?', [id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error retrieving user' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(results[0]);
+    });
+});
+
+
+//Fetch User Profile
+router.get('/user-profile/:id', (req, res) => {
+    const { id } = req.params;
+
+    console.log("userID: ", id);
+
+    db.query(
+        'SELECT * FROM user_profile WHERE userID = ?',
+        [id],
+        (error, results) => {
+            if (error) {
+                console.error('Error fetching user profile:', error);
+                return res.status(500).json({ message: 'Error fetching user profile' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Profile not found' });
+            }
+
+            res.status(200).json(results[0]);
+        }
+    );
+});
+
+//Update User Profile
+router.put('/user-profile/:id', (req, res) => {
+
+    console.log("Call PUT Successfully");
+    const userID = req.params.id;
+    const { nickname, profilePic, bio, university,college,school, address, contact, interestedDepartment } = req.body;
+
+    console.log("PUT Data: ",req.body);
+
+    db.query(
+        'UPDATE user_profile SET nickname = ?, profilePic = ?, bio = ?, university = ?, college = ?, school = ?, address = ?, contact = ?, interestedDepartment = ? WHERE userID = ?',
+        [nickname, profilePic, bio, university, college, school, address, contact, JSON.stringify(interestedDepartment), userID],
+        (error, results) => {
+            if (error) {
+                console.error('Error updating user profile:', error);
+                return res.status(500).json({ message: 'Error updating user profile' });
+            }
+
+            res.status(200).json({ message: 'Profile updated successfully' });
+        }
+    );
+});
+
+
+// Set up Multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../routes/uploads'); // Adjusted the path
+    console.log(uploadDir);
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
+    }
+    cb(null, uploadDir); // Save files to the 'uploads' folder
+    console.log(cb);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+    console.log(cb);
+  }
+});
+
+const upload = multer({ storage });
+
+// Upload profile picture endpoint
+router.post('/upload-profile-pic/:id', upload.single('profilePic'), async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  if (!req.file) {
+    console.error('No file received');
+    return res.status(400).json({ success: false, message: 'No file received' });
+  }
+  
+  const profilePicUrl = `uploads/${req.file.filename}`; // Save the relative URL of the file
+  console.log(profilePicUrl);
+
+  try {
+    console.log('File received:', req.file);
+    console.log('Profile pic URL:', profilePicUrl);
+
+    // Update the user's profile picture URL in the database
+     db.query('UPDATE user_profile SET profilePic = ? WHERE userID = ?', [profilePicUrl, id]);
+
+    res.status(200).json({ success: true, url: profilePicUrl });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({ success: false, message: 'Error uploading profile picture' });
+  }
+});
+
+
+
+
+
+
+
+
 // Helper function to send status email
 const sendStatusEmail = async (email, name, programName, status) => {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
-        secure: false,  
+        secure: false,
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
         },
     });
-    
+
 
     let subject, text;
 

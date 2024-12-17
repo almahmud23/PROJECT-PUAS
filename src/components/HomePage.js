@@ -1,4 +1,3 @@
-// components/HomePage.js
 import React from 'react';
 import Navbar from './Navbar';
 import './HomePage.css';
@@ -6,54 +5,60 @@ import './HomePage.css';
 const HomePage = () => {
   return (
     <div className="home-container">
+      {/* Header */}
       <header className="home-header">
-        <h1>Welcome to PUAS-Home</h1>
         <Navbar />
+        <h1>Welcome to PUAS</h1>
+        <p className="subheading">Your one-stop solution for academic success</p>
       </header>
 
+      {/* Main Section */}
       <main className="home-main">
+        {/* Introduction */}
         <section className="home-intro">
           <h2>About Us</h2>
           <p>
-            Users (students, admins, and university staff) can register and log in securely. Role-based authentication ensures that users have access only to features relevant to their role. It includes password recovery for enhanced security.
+            PUAS is designed to connect students, universities, and administrators seamlessly. 
+            Explore programs, apply to universities, calculate waivers, and discover scholarship opportunities with role-based access.
           </p>
         </section>
+
+        {/* Features Section */}
         <section className="home-features">
-          <h2>Features</h2>
-          <div className="feature-cards">
+          <h2>Key Features</h2>
+          <div className="feature-grid">
             <div className="feature-card">
-              <h3>Explore Programs</h3>
-              <p>Discover a wide range of programs tailored for your academic interests.</p>
+              <h3>🎓 Explore Posts</h3>
+              <p>Discover a wide range of university and programs related news and offer to your interests.</p>
             </div>
             <div className="feature-card">
-              <h3>Apply to Universities</h3>
-              <p>Submit your applications effortlessly through our platform.</p>
+              <h3>🏫 Apply to Universities</h3>
+              <p>Submit applications to your dream universities effortlessly.</p>
             </div>
             <div className="feature-card">
-              <h3>User Applying for Scholarship</h3>
-              <p>Browse available scholarships and apply directly.</p>
-            </div>
-            <div className="feature-card">
-              <h3>User Waiver Calculation</h3>
-              <p>Users can calculate waivers on specific programs based on their SSC & HSC GPA.</p>
+              <h3>💰 Offers</h3>
+              <p>Find and apply for scholarships and internship that match your needs.</p>
             </div>
           </div>
         </section>
-        <section className="city">
-          <h2>Explore City of Study</h2>
-          <div className="feature-cards">
-            <div className="feature-card">
+
+        {/* Explore Cities */}
+        <section className="explore-cities">
+          <h2>Explore Cities</h2>
+          <div className="city-grid">
+            <div className="city-card">
               <h3>Dhaka</h3>
-              <p>Discover a wide range of programs tailored for your academic interests.</p>
+              <p>Top universities and career opportunities await in Dhaka.</p>
             </div>
-            <div className="feature-card">
+            <div className="city-card">
               <h3>Chittagong</h3>
-              <p>Submit your applications effortlessly through our platform.</p>
+              <p>Explore top academic programs and vibrant city life.</p>
             </div>
           </div>
         </section>
       </main>
 
+      {/* Footer */}
       <footer className="home-footer">
         <p>&copy; 2024 TeamAria. All rights reserved.</p>
       </footer>

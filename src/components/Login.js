@@ -43,7 +43,7 @@ const Login = () => {
             } else if (data.user && data.user.role === 'Staff') {
                 navigate('/staff-dashboard');  // Redirect to staff dashboard if role is staff
             } else {
-                navigate('/dashboard');  // Regular users (students) go to home page
+                navigate('/student-dashboard');  // Regular users (students) go to home page
             }
         } catch (error) {
             console.error('Error during login:', error);

@@ -16,6 +16,13 @@ import UserManagement from './components/UserManagement';
 import PrivateRoute from './components/PrivateRoute';
 import DetailsProgram from './components/DetailsProgram'; 
 import UniversityDetails from './components/UniversityDetails';
+import UniversityManagement from './components/UniversityManagement';
+import UniversityForm from './components/UniversityForm';
+import StudentProfile from './components/StudentProfile';
+import Unauthorized from './components/Unauthorized';
+import UniversityCard from './components/UniversityCard';
+import ProgramCard from './components/ProgramCard';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -23,13 +30,23 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<StudentDashboard />} />
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/student-profile/:id" element={<StudentProfile />} />
+
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
+  
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/staff-dashboard" element={<StaffDashboard />} />
-          <Route path="programs-form" element={<ProgramsForm />} />
+          <Route path="/uni-card" element={<UniversityCard />} />
+          <Route path="/programs-form" element={<ProgramsForm />} />
+          <Route path="/programs-card" element={<ProgramCard />} />
+          <Route path="/programs" element={<Dashboard />} />
+          <Route path="uni-form" element={<UniversityForm />} />
+          
           {/* Define route for program details */}
           <Route path="/program-details/:programID" element={<DetailsProgram />} />
 
@@ -66,6 +83,15 @@ function App() {
             element={
               <PrivateRoute roles={['Admin']}>
                 <ProgramManagement />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/university-manage"
+            element={
+              <PrivateRoute roles={['Admin']}>
+                <UniversityManagement/>
               </PrivateRoute>
             }
           />

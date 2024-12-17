@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mysql = require('mysql');
@@ -18,6 +19,8 @@ app.use(express.json());
 
 // Setup auth routes
 app.use('/api/auth', authRoutes); 
+
+app.use('/uploads', express.static(path.join(__dirname, 'routes/uploads')));
 
 app.get('/', (req, res) => {
   res.send('Server is running');

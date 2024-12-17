@@ -1,0 +1,73 @@
+/* UniversityCard.css */
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .university-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-container input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1 1 200px;
+  }
+  
+  .university-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+  }
+  
+  .university-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .university-card h3 {
+    margin: 0 0 10px;
+    cursor: pointer;
+  }
+  
+  .university-card p {
+    margin: 5px 0;
+  }
+  
+  .university-card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .university-card a:hover {
+    text-decoration: underline;
+  }
+  
+  .university-card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .university-card button:hover {
+    background-color: #0056b3;
+  }
+  
